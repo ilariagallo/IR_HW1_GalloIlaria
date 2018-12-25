@@ -19,12 +19,12 @@
 selected_measure = 'P10'
 
 if strcmp(selected_measure,'map')
-        load('/Users/Ilaria/Documents/Università/InformationRetrival/HW1/measures/ap_map.mat');
+        load('/Users/Ilaria/Documents/Università/InformationRetrival/IR_HW1_GalloIlaria/ANOVA/ap_map.mat');
     else
         if strcmp(selected_measure,'Rprec')
-            load('/Users/Ilaria/Documents/Università/InformationRetrival/HW1/measures/ap_Rprec.mat');
+            load('/Users/Ilaria/Documents/Università/InformationRetrival/IR_HW1_GalloIlaria/ANOVA/ap_Rprec.mat');
             else 
-            load('/Users/Ilaria/Documents/Università/InformationRetrival/HW1/measures/ap_P10.mat');
+            load('/Users/Ilaria/Documents/Università/InformationRetrival/IR_HW1_GalloIlaria/ANOVA/ap_P10.mat');
         end
     end
 
@@ -45,7 +45,30 @@ runID = runID(idx);
 [~, tbl, sts] = anova1(measure, runID, 'off');
 
 % display the ANOVA table
-tbl
+tbl(:,:)
+
+% save the table into a figure
+T = table(tbl(:,1), tbl(:,2), tbl(:,3), tbl(:,4), tbl(:,5), tbl(:,6));
+RowNames = {'Columns', 'Error', 'Total'};
+ColumnNames = {'SS', 'df', 'MS', 'F', 'p-value'};
+fig = figure('Name','ANOVAtest');
+uitable(fig, 'Data',T{2:4,2:6},'ColumnName',ColumnNames,'RowName',RowNames,'Units', 'Normalized', 'Position',[0 0 0.81 0.25])
+figure
+
+if strcmp(selected_measure,'map')
+    c = uicontrol(fig,'String', 'ANOVA test results for map', 'Position', [0, 0, 150, 30]);
+    print(fig,'-fillpage', '-dpdf', 'ANOVAtest_map.pdf');
+    
+    else
+        if strcmp(selected_measure,'Rprec')
+            c = uicontrol(fig,'String', 'ANOVA test results for Rprec', 'Position', [0, 0, 150, 30]);
+            print(fig,'-fillpage','-dpdf', 'ANOVAtest_Rprec.pdf');
+            else 
+            c = uicontrol(fig,'String', 'ANOVA test results for P10', 'Position', [0, 0, 150, 30]);    
+            print(fig, '-fillpage','-dpdf', 'ANOVAtest_P10.pdf');
+        end
+end
+
 
 % perform
 c = multcompare(sts, 'Alpha', 0.05, 'Ctype', 'hsd'); 
